@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for
 from pytube import YouTube
 from tqdm import tqdm
 import os
-from pathlib import Path
 
 app = Flask(__name__)
 
@@ -54,11 +53,7 @@ def download():
     yt.register_on_progress_callback(progress_function)
 
     print(f"Downloading {yt.title} in {video.resolution} resolution...")
-
-    # Set download path to the user's Downloads folder
-    download_folder = str(Path.home() / "Downloads")  # Convert Path object to string
-    video.download(output_path=download_folder)
-    
+    video.download()
     tqdm_bar.close()
     print("Download completed!")
 
