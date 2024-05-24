@@ -1,9 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for
 from pytube import YouTube
 from tqdm import tqdm
 import os
 from pathlib import Path
-import shutil
 
 app = Flask(__name__)
 
@@ -56,19 +55,14 @@ def download():
 
     print(f"Downloading {yt.title} in {video.resolution} resolution...")
 
-    # Set download path to a temporary folder
-    temp_folder = Path.home() / "Downloads" / "temp"
-    os.makedirs(temp_folder, exist_ok=True)
-    temp_file_path = temp_folder / f"{yt.title}.{video.extension}"
-
-    # Download video to the temporary folder
-    video.download(output_path=temp_folder, filename=yt.title)
-
+    # Set download path to the user's Downloads folder
+    download_folder = str(Path.home() / "Downloads")  # Convert Path object to string
+    video.download(output_path=download_folder)
+    
     tqdm_bar.close()
     print("Download completed!")
 
-    # Send the file as a response with appropriate headers
-    return send_file(temp_file_path, as_attachment=True)
+    return redirect(url_for('download_complete'))
 
 @app.route("/download_complete", methods=["GET"])
 def download_complete():
